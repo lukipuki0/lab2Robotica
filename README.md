@@ -265,10 +265,47 @@ void detener() {
   analogWrite(enA, 0); analogWrite(enB, 0);
 }
 ````
+
 • Algoritmo de planificacion de rutas reacivos: evitacion de obstaculos,
-y deteccion de colores basado en reglas 
+
+Control basado en reglas “sense–plan–act” sin memoria del entorno.
+
+Evitación de obstáculos: el sensor ultrasónico mide la distancia frontal; si esta cae por debajo de 10 cm, el robot detiene su avance, retrocede brevemente y realiza un giro de esquiva.
+
+Detección de colores: en ausencia de obstáculos, se obtienen los valores crudos R, G y B del TCS34725. Si uno de los canales excede a los demás y supera el umbral de 250, se ejecuta la maniobra asociada (giro a la izquierda para rojo, giro a la derecha para azul o parada breve para verde); en caso contrario, se continúa avanzando.
+
 • Implementacion correcta de umbrales de deteccion
+
+Umbral de color fijado en 250 (en escala 0–65535), elegido como valor intermedio entre lecturas de fondo y lecturas de color puro.
+
+Calibración adaptada a condiciones reales de iluminación:
+
+Medición de varios valores de cada color bajo diferentes niveles de luz.
+
+Selección de un umbral entre el mínimo de color y el máximo de fondo.
+
+Zona muerta (histeresis) recomendada para evitar oscilaciones: entrada en estado “rojo” sólo si R > 260, salida sólo si R < 240.
+
 • Pruebas y ajustes en entorno real 
+
+Recorridos de validación: trayectos con tramos pintados de los distintos colores y obstáculos estáticos o móviles.
+
+Registro de datos: volcado por consola de lecturas crudas (r, g, b y distancia) para analizar rangos y dispersión.
+
+Ajuste de temporizaciones: refinamiento de los retardos (delay) tras cada maniobra para equilibrar rapidez de respuesta y estabilidad mecánica.
+
+Variación lumínica: ensayos bajo luz diurna, artificial y penumbra para comprobar la robustez de los umbrales y ajustar, si procede, la ganancia del sensor.
+
+1) [Test obstáculos](https://drive.google.com/file/d/1DXhDwqMomEkx_2J2iZwV-Aea-MsD9uYI/view?usp=drive_link)
+
 • Reflexion sobre posibles mejoras en la detección
 
+Filtrado de señal: aplicación de un promedio móvil o filtro de mediana sobre las últimas N lecturas RGB.
 
+Espacio de color HSV: conversión de RGB a HSV y detección de matices (Hue) para reducir la dependencia de la iluminación.
+
+Fusión de sensores: verificación con ultrasonido de que la marca de color está en el suelo, evitando falsos positivos por reflejos.
+
+Control de velocidad PID: sustitución del analogWrite fijo por un lazo PID para maniobras más suaves y repetibles.
+
+Memoria mínima de ruta: registro de las últimas posiciones visitadas para prevenir bucles de comportamiento en espacios estrechos.
