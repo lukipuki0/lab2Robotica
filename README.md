@@ -33,7 +33,7 @@ Para reducir el impacto del ruido en las mediciones de un sensor ultrasónico, s
 • Filtro de media ponderada: Similar a la media móvil, pero da más peso a los valores más recientes.
 • Filtro pasa bajos: Atenúa las frecuencias altas, que a menudo corresponden al ruido rápido, suavizando la señal.
 
-##Codigo
+## Codigo
 
 ````
 #include <Wire.h>
@@ -101,7 +101,7 @@ void leerColor() {
 }
 ````
 
-### 1.3 Análisis de variaciones en las lecturas 
+## Análisis de variaciones en las lecturas 
 
 Para evaluar la respuesta de los sensores se grabaron varios videos con escenarios controlados:
 
@@ -113,4 +113,162 @@ Para evaluar la respuesta de los sensores se grabaron varios videos con escenari
 - **Sensor ultrasónico HC-SR04 :**  
   A medida que la mano se acerca y se aleja del sensor, el valor de distancia registrado cambia acorde a la posición.
 1) [DistanciaEcoSensor](https://drive.google.com/file/d/1teH5Sy6mwrs5qpJ_SjsL9Sa3c9MW02mg/view?usp=drive_link)
+
+## Parte 2
+
+## Preguntas II
+
+• Si el robot detecta el color rojo en el suelo ¿ Qué acción debería tomar?
+¿ Por qué?
+• Si el sensor ultrasónico detecta valores erráticos ¿ Qué estrategias
+podrías aplicar para mejorar la precisión?
+
+Filtrado estadístico: aplicar un filtro de mediana o un promedio móvil para descartar valores “espurios” que quedan fuera del rango físico plausible.
+
+Calibración y rechazo de outliers: usar mediciones en un entorno controlado para ajustar offset y escala, y descartar automáticamente lecturas muy lejanas de la media .
+
+Filtro de Kalman: combina la predicción (modelo de movimiento del robot) con la medición ultrasónica, ponderando según la incertidumbre de cada fuente, para obtener estimaciones más estables y precisas.
+
+• Si tuvieras que integrar un nuevo sensor para mejorar la navegación
+del robot ¿ Cuál eligiráas y por qué?.
+
+Un LIDAR 2D  porque ofrece:
+
+Muy alta precisión en la medición de distancias.
+
+Alcance largo (decenas de metros), ideal para mapear y detectar obstáculos temprano.
+
+Velocidad de muestreo muy rápida, compatible con técnicas de SLAM para construir mapas en tiempo real.
+Frente a un sensor RGB-D (que además aporta color) o al ultrasonido, el LIDAR es más robusto ante variaciones de iluminación y superficies no reflectantes
+
+• ¿Cuál es el tiempo de respuesta del robot al detectar un cambio de
+color?
+
+Está limitado por la frecuencia de muestreo del sensor y el ciclo de procesamiento. Si, por ejemplo, utilizamos un sensor RGB con un bucle de control a 100 Hz (Δt = 0,01 s), cada muestra —incluyendo la lectura RGB y la comparación con el umbral de “rojo puro”— se completa en ≈10 ms. Añadiendo unos pocos milisegundos más de procesado en el microcontrolador, la respuesta total queda por debajo de 20 ms.
+
+## Codigo 
+
+````
+
+#include <Wire.h>
+#include "Adafruit_TCS34725.h"
+
+const int trigPin = 2;
+const int echoPin = 3;
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+
+
+const int enA = 9;  
+const int in1 = 8;
+const int in2 = 7;
+
+// Motor Derecho
+const int enB = 6; 
+const int in3 = 5;
+const int in4 = 4;
+
+const int DISTANCIA_OBSTACULO = 10;
+const int UMBRAL_DETECCION_COLOR = 250; 
+
+void setup() {
+  Serial.begin(9600);
+
+ 
+  if (!tcs.begin()) {
+    Serial.println("No se encontró el sensor TCS34725... revisa las conexiones SCL (A5) y SDA (A4).");
+    while (1);
+  }
+  
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  pinMode(enA, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(enB, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
+
+  detener();
+  Serial.println("Setup completo. Robot listo para la Parte 2.");
+}
+
+void loop() {
+  long duration;
+  int distancia;
+  
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distancia = duration * 0.034 / 2;
+
+  if (distancia < DISTANCIA_OBSTACULO && distancia > 0) {
+    Serial.print("Obstaculo detectado a ");
+    Serial.print(distancia);
+    Serial.println(" cm. ¡Evadiendo!");
+    detener();
+    delay(200);
+    retroceder(150);
+    delay(400);
+    girarDerecha(150);
+    delay(300);
+    detener();
+  } else {
+    uint16_t r, g, b, c;
+    tcs.getRawData(&r, &g, &b, &c);
+
+    if (r > g && r > b && r > UMBRAL_DETECCION_COLOR) {
+      Serial.println("Rojo detectado. Girando a la izquierda.");
+      girarIzquierda(150);
+      delay(100);
+    } else if (b > r && b > g && b > UMBRAL_DETECCION_COLOR) {
+      Serial.println("Azul detectado. Girando a la derecha.");
+      girarDerecha(150);
+      delay(100);
+    } else if (g > r && g > b && g > UMBRAL_DETECCION_COLOR) {
+      Serial.println("Verde detectado. Deteniendo.");
+      detener();
+      delay(500);
+    } else {
+      Serial.println("Camino libre. Avanzando.");
+      avanzar(150);
+    }
+  }
+  delay(50);
+}
+
+void avanzar(int velocidad) {
+  digitalWrite(in1, HIGH); digitalWrite(in2, LOW); analogWrite(enA, velocidad);
+  digitalWrite(in3, HIGH); digitalWrite(in4, LOW); analogWrite(enB, velocidad);
+}
+
+void retroceder(int velocidad) {
+  digitalWrite(in1, LOW); digitalWrite(in2, HIGH); analogWrite(enA, velocidad);
+  digitalWrite(in3, LOW); digitalWrite(in4, HIGH); analogWrite(enB, velocidad);
+}
+
+void girarDerecha(int velocidad) {
+  digitalWrite(in1, HIGH); digitalWrite(in2, LOW); analogWrite(enA, velocidad);
+  digitalWrite(in3, LOW); digitalWrite(in4, HIGH); analogWrite(enB, velocidad);
+}
+
+void girarIzquierda(int velocidad) {
+  digitalWrite(in1, LOW); digitalWrite(in2, HIGH); analogWrite(enA, velocidad);
+  digitalWrite(in3, HIGH); digitalWrite(in4, LOW); analogWrite(enB, velocidad);
+}
+
+void detener() {
+  analogWrite(enA, 0); analogWrite(enB, 0);
+}
+````
+• Algoritmo de planificacion de rutas reacivos: evitacion de obstaculos,
+y deteccion de colores basado en reglas 
+• Implementacion correcta de umbrales de deteccion
+• Pruebas y ajustes en entorno real 
+• Reflexion sobre posibles mejoras en la detección
+
 
