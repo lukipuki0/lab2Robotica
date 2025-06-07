@@ -1,6 +1,4 @@
-# lab2Robotica
-
-## Parte 1
+# Lab2Robotica
 
 Integrantes:
 - Lucas Erazo
@@ -11,28 +9,24 @@ Integrantes:
 
 ## Preguntas I
 
-• ¿ Qué es la percepción en robótica y por qué es fundamental en los
-sistemas autónomos?
-La percepción en robótica es la capacidad que tiene un robot para recolectar datos del mundo exterior (y a veces de su propio estado interno) y transformarlos en información útil para navegar, interactuar o cumplir tareas.
+### 1. ¿Qué es la percepción en robótica y por qué es fundamental en los sistemas autónomos?
 
-Es fundamental en los sistemas autónomos porque para que los robots tomen decisiones inteligentes, necesitan percibir qué hay a su alrededor y así construir una representación del mundo. Esta comprensión del entorno, lograda a través de los sensores, les permite actuar de manera autónoma
+* La percepción en robótica es la capacidad que tiene un robot para recolectar datos del mundo exterior y transformarlos en información útil para navegar, interactuar o cumplir tareas.
+* Es fundamental en los sistemas autónomos porque para que los robots tomen decisiones inteligentes, necesitan percibir qué hay a su alrededor y así construir una representación del mundo. Esta comprensión del entorno, lograda a través de los sensores, les permite actuar de manera autónoma
+---
+### 2. En el sensor ultrasónico HC-SR04 ¿Qué parámetro se mide para calcular la distancia?
 
-• En el sensor ultrasónico HC-SR04 ¿ Qué parámetro se mide para calcular la distancia?
+* En el sensor ultrasónico HC-SR04, el parámetro que se mide para calcular la distancia es el tiempo que tarda una onda ultrasónica en viajar desde el sensor hasta un objeto y regresar como un eco. Específicamente, el microcontrolador mide la duración del pulso en el pin ECHO, que corresponde al tiempo total de viaje de la onda sonora. Luego, este tiempo se convierte en distancia usando la velocidad del sonido.
+---
+### 3. ¿Cómo influye el ruido en las mediciones del sensor ultrasónico y cómo podría reducirse?
 
-En el sensor ultrasónico HC-SR04, el parámetro que se mide para calcular la distancia es el tiempo que tarda una onda ultrasónica en viajar desde el sensor hasta un objeto y regresar como un eco. Específicamente, el microcontrolador mide la duración del pulso en el pin ECHO, que corresponde al tiempo total de viaje de la onda sonora. Luego, este tiempo se convierte en distancia usando la velocidad del sonido.
+* El ruido puede influir significativamente en las mediciones del sensor ultrasónico, provocando datos inconsistentes, es decir, mediciones que saltan bruscamente sin una causa real. Factores ambientales como el viento o las características del objeto como superficies blandas también pueden afectar negativamente la precisión de las lecturas, comportándose como fuentes de ruido o error.
+* Para reducir el impacto del ruido en las mediciones de un sensor ultrasónico, se pueden aplicar técnicas de filtrado de datos. Estas técnicas buscan eliminar o reducir el ruido e imperfecciones presentes en las señales. Algunos filtros comunes que ayudan a suavizar la señal y eliminar picos falsos son:
 
-• ¿ Cómo influye el ruido en las mediciones del sensor ultrasónico y cómo
-podría reducirse?
-
-El ruido puede influir significativamente en las mediciones del sensor ultrasónico, provocando datos inconsistentes, es decir, mediciones que saltan bruscamente sin una causa real. Factores ambientales como el viento o las características del objeto como superficies blandas también pueden afectar negativamente la precisión de las lecturas, comportándose como fuentes de ruido o error.
-
-
-Para reducir el impacto del ruido en las mediciones de un sensor ultrasónico, se pueden aplicar técnicas de filtrado de datos. Estas técnicas buscan eliminar o reducir el ruido e imperfecciones presentes en las señales. Algunos filtros comunes que ayudan a suavizar la señal y eliminar picos falsos son:
-
-• Filtro de media móvil: Promedia los últimos N valores para suavizar la señal.
-• Filtro de media ponderada: Similar a la media móvil, pero da más peso a los valores más recientes.
-• Filtro pasa bajos: Atenúa las frecuencias altas, que a menudo corresponden al ruido rápido, suavizando la señal.
-
+* Filtro de media móvil: Promedia los últimos N valores para suavizar la señal.
+* Filtro de media ponderada: Similar a la media móvil, pero da más peso a los valores más recientes.
+* Filtro pasa bajos: Atenúa las frecuencias altas, que a menudo corresponden al ruido rápido, suavizando la señal.
+---
 ## Codigo
 
 ````
@@ -114,37 +108,33 @@ Para evaluar la respuesta de los sensores se grabaron varios videos con escenari
   A medida que la mano se acerca y se aleja del sensor, el valor de distancia registrado cambia acorde a la posición.
 1) [DistanciaEcoSensor](https://drive.google.com/file/d/1teH5Sy6mwrs5qpJ_SjsL9Sa3c9MW02mg/view?usp=drive_link)
 
-## Parte 2
 
 ## Preguntas II
 
-• Si el robot detecta el color rojo en el suelo ¿ Qué acción debería tomar?
-¿ Por qué?
-• Si el sensor ultrasónico detecta valores erráticos ¿ Qué estrategias
-podrías aplicar para mejorar la precisión?
+### 1. Si el robot detecta el color rojo en el suelo ¿ Qué acción debería tomar? ¿Por qué?
+---
+### 2.Si el sensor ultrasónico detecta valores erráticos ¿Qué estrategias podrías aplicar para mejorar la precisión?
 
-Filtrado estadístico: aplicar un filtro de mediana o un promedio móvil para descartar valores “espurios” que quedan fuera del rango físico plausible.
+* Filtrado estadístico: aplicar un filtro de mediana o un promedio móvil para descartar valores “errantes” que quedan fuera del rango físico plausible.
 
-Calibración y rechazo de outliers: usar mediciones en un entorno controlado para ajustar offset y escala, y descartar automáticamente lecturas muy lejanas de la media .
+* Calibración y rechazo de outliers: usar mediciones en un entorno controlado para ajustar offset y escala, y descartar automáticamente lecturas muy lejanas de la media .
 
-Filtro de Kalman: combina la predicción (modelo de movimiento del robot) con la medición ultrasónica, ponderando según la incertidumbre de cada fuente, para obtener estimaciones más estables y precisas.
+* Filtro de Kalman: combina la predicción con la medición ultrasónica, ponderando según la incertidumbre de cada fuente, para obtener estimaciones más estables y precisas.
+---
+### 3. Si tuvieras que integrar un nuevo sensor para mejorar la navegación del robot ¿ Cuál eligiráas y por qué?.
 
-• Si tuvieras que integrar un nuevo sensor para mejorar la navegación
-del robot ¿ Cuál eligiráas y por qué?.
+* Un LIDAR 2D  porque ofrece:
 
-Un LIDAR 2D  porque ofrece:
+- Muy alta precisión en la medición de distancias.
 
-Muy alta precisión en la medición de distancias.
+- Alcance largo, ideal para mapear y detectar obstáculos temprano.
 
-Alcance largo (decenas de metros), ideal para mapear y detectar obstáculos temprano.
+- Velocidad de muestreo muy rápida, compatible con técnicas de SLAM para construir mapas en tiempo real.
+- Frente a un sensor RGB-D (que además aporta color) o al ultrasonido, el LIDAR es más robusto ante variaciones de iluminación y superficies no reflectantes.
 
-Velocidad de muestreo muy rápida, compatible con técnicas de SLAM para construir mapas en tiempo real.
-Frente a un sensor RGB-D (que además aporta color) o al ultrasonido, el LIDAR es más robusto ante variaciones de iluminación y superficies no reflectantes
+### 4. ¿Cuál es el tiempo de respuesta del robot al detectar un cambio de color?
 
-• ¿Cuál es el tiempo de respuesta del robot al detectar un cambio de
-color?
-
-Está limitado por la frecuencia de muestreo del sensor y el ciclo de procesamiento. Si, por ejemplo, utilizamos un sensor RGB con un bucle de control a 100 Hz (Δt = 0,01 s), cada muestra —incluyendo la lectura RGB y la comparación con el umbral de “rojo puro”— se completa en ≈10 ms. Añadiendo unos pocos milisegundos más de procesado en el microcontrolador, la respuesta total queda por debajo de 20 ms.
+* Está limitado por la frecuencia de muestreo del sensor y el ciclo de procesamiento. Si, por ejemplo, utilizamos un sensor RGB con un bucle de control a 100 Hz (Δt = 0,01 s), cada muestra —incluyendo la lectura RGB y la comparación con el umbral de “rojo puro”— se completa en ≈10 ms. Añadiendo unos pocos milisegundos más de procesado en el microcontrolador, la respuesta total queda por debajo de 20 ms.
 
 ## Codigo 
 
@@ -266,46 +256,43 @@ void detener() {
 }
 ````
 
-• Algoritmo de planificacion de rutas reacivos: evitacion de obstaculos,
+### - Algoritmo de planificacion de rutas reacivos: evitacion de obstaculos y deteccion de colores basado en reglas 
 
-Control basado en reglas “sense–plan–act” sin memoria del entorno.
+* Control basado en reglas “sense–plan–act” sin memoria del entorno.
+  
+  - Evitación de obstáculos: el sensor ultrasónico mide la distancia frontal; si esta cae por debajo de 10 cm, el robot detiene su avance, retrocede brevemente y realiza un giro de esquiva.
+  - Detección de colores: en ausencia de obstáculos, se obtienen los valores crudos R, G y B del TCS34725. Si uno de los canales excede a los demás y supera el umbral de 250, se ejecuta la maniobra asociada (giro a la izquierda para rojo, giro a la derecha para azul o parada breve para verde); en caso contrario, se continúa avanzando.
 
-Evitación de obstáculos: el sensor ultrasónico mide la distancia frontal; si esta cae por debajo de 10 cm, el robot detiene su avance, retrocede brevemente y realiza un giro de esquiva.
+### - Implementacion correcta de umbrales de deteccion
 
-Detección de colores: en ausencia de obstáculos, se obtienen los valores crudos R, G y B del TCS34725. Si uno de los canales excede a los demás y supera el umbral de 250, se ejecuta la maniobra asociada (giro a la izquierda para rojo, giro a la derecha para azul o parada breve para verde); en caso contrario, se continúa avanzando.
+* Umbral de color fijado en 250 (en escala 0–65535), elegido como valor intermedio entre lecturas de fondo y lecturas de color puro.
 
-• Implementacion correcta de umbrales de deteccion
+* Calibración adaptada a condiciones reales de iluminación:
+  - Medición de varios valores de cada color bajo diferentes niveles de luz.
+  - Selección de un umbral entre el mínimo de color y el máximo de fondo.
 
-Umbral de color fijado en 250 (en escala 0–65535), elegido como valor intermedio entre lecturas de fondo y lecturas de color puro.
+* Zona muerta recomendada para evitar oscilaciones: entrada en estado “rojo” sólo si R > 260, salida sólo si R < 240.
 
-Calibración adaptada a condiciones reales de iluminación:
+### - Pruebas y ajustes en entorno real 
 
-Medición de varios valores de cada color bajo diferentes niveles de luz.
+* Recorridos de validación: trayectos con tramos pintados de los distintos colores y obstáculos estáticos o móviles.
 
-Selección de un umbral entre el mínimo de color y el máximo de fondo.
+* Registro de datos: volcado por consola de lecturas crudas (r, g, b y distancia) para analizar rangos y dispersión.
 
-Zona muerta (histeresis) recomendada para evitar oscilaciones: entrada en estado “rojo” sólo si R > 260, salida sólo si R < 240.
+* Ajuste de temporizaciones: refinamiento de los delay tras cada maniobra para equilibrar rapidez de respuesta y estabilidad mecánica.
 
-• Pruebas y ajustes en entorno real 
-
-Recorridos de validación: trayectos con tramos pintados de los distintos colores y obstáculos estáticos o móviles.
-
-Registro de datos: volcado por consola de lecturas crudas (r, g, b y distancia) para analizar rangos y dispersión.
-
-Ajuste de temporizaciones: refinamiento de los retardos (delay) tras cada maniobra para equilibrar rapidez de respuesta y estabilidad mecánica.
-
-Variación lumínica: ensayos bajo luz diurna, artificial y penumbra para comprobar la robustez de los umbrales y ajustar, si procede, la ganancia del sensor.
+* Variación lumínica: ensayos bajo luz diurna, artificial y penumbra para comprobar la robustez de los umbrales y ajustar, si procede, la ganancia del sensor.
 
 1) [Test obstáculos](https://drive.google.com/file/d/1DXhDwqMomEkx_2J2iZwV-Aea-MsD9uYI/view?usp=drive_link)
 
-• Reflexion sobre posibles mejoras en la detección
+### - Reflexion sobre posibles mejoras en la detección
 
-Filtrado de señal: aplicación de un promedio móvil o filtro de mediana sobre las últimas N lecturas RGB.
+* Filtrado de señal: aplicación de un promedio móvil o filtro de mediana sobre las últimas N lecturas RGB.
 
-Espacio de color HSV: conversión de RGB a HSV y detección de matices (Hue) para reducir la dependencia de la iluminación.
+* Espacio de color HSV: conversión de RGB a HSV y detección de matices para reducir la dependencia de la iluminación.
 
-Fusión de sensores: verificación con ultrasonido de que la marca de color está en el suelo, evitando falsos positivos por reflejos.
+* Fusión de sensores: verificación con ultrasonido de que la marca de color está en el suelo, evitando falsos positivos por reflejos.
 
-Control de velocidad PID: sustitución del analogWrite fijo por un lazo PID para maniobras más suaves y repetibles.
+* Control de velocidad PID: sustitución del analogWrite fijo por un lazo PID para maniobras más suaves y repetibles.
 
-Memoria mínima de ruta: registro de las últimas posiciones visitadas para prevenir bucles de comportamiento en espacios estrechos.
+* Memoria mínima de ruta: registro de las últimas posiciones visitadas para prevenir bucles de comportamiento en espacios estrechos.
